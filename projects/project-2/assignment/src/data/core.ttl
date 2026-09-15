@@ -4159,7 +4159,7 @@ iao-edit:approach_speed_specification rdf:type owl:Class ;
 iao-edit:artifact_design rdf:type owl:Class ;
                          rdfs:subClassOf obo:IAO_0000030 ;
                          obo:IAO_0000115 "An information content entity containing technical design specifications for aircraft." ;
-                         rdfs:label "Airbus A320 NEO Artifact Design" .
+                         rdfs:label "Artifact Design" .
 
 
 ###  http://purl.obolibrary.org/obo/iao/iao-edit.owl#average_maximum_approach_speed_measurement
