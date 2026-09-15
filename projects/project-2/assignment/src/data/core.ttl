@@ -4206,7 +4206,7 @@ iao-edit:geographic_area rdf:type owl:Class ;
 
 ###  http://purl.obolibrary.org/obo/iao/iao-edit.owl#jet_engine
 iao-edit:jet_engine rdf:type owl:Class ;
-                    rdfs:subClassOf iao-edit:engine ;
+                    rdfs:subClassOf obo:BFO_0000040 ;
                     obo:IAO_0000115 "An engine that generates thrust by accelerating a stream of gas." ;
                     rdfs:label "Jet Engine" .
 
