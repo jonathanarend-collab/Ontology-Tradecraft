@@ -422,16 +422,16 @@ iao-edit:has_area rdf:type owl:ObjectProperty ;
 iao-edit:has_continuant_part rdf:type owl:ObjectProperty ;
                              rdfs:domain obo:BFO_0000002 ;
                              rdfs:range obo:BFO_0000002 ;
-                             obo:IAO_0000115 "A relation between two continuants in which the second continuant is a continuant part of the first." ;
-                             rdfs:label "has continuant part" .
+                             rdfs:label "has continuant part" ;
+                             <http://www.w3.org/2004/02/skos/core#definition> "A relation between two continuants in which the second continuant is a continuant part of the first." .
 
 
 ###  http://purl.obolibrary.org/obo/iao/iao-edit.owl#has_manufacturer
 iao-edit:has_manufacturer rdf:type owl:ObjectProperty ;
                           rdfs:domain iao-edit:aircraft ;
                           rdfs:range iao-edit:organization ;
-                          obo:IAO_0000115 "Relates an artifact to the organization that manufactures it." ;
-                          rdfs:label "has manufacturer" .
+                          rdfs:label "has manufacturer" ;
+                          <http://www.w3.org/2004/02/skos/core#definition> "Relates an artifact to the organization that manufactures it." .
 
 
 ###  http://purl.obolibrary.org/obo/iao/iao-edit.owl#inheres_in
