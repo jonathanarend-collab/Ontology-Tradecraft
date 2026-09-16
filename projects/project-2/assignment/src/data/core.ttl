@@ -4197,8 +4197,8 @@ iao-edit:engine rdf:type owl:Class ;
 ###  http://purl.obolibrary.org/obo/iao/iao-edit.owl#fixed_wing
 iao-edit:fixed_wing rdf:type owl:Class ;
                     rdfs:subClassOf iao-edit:aircraft ;
-                    obo:IAO_0000115 "An aircraft that generates lift primarily by means of wings that remain fixed relative to the aircraft during flight." ;
-                    rdfs:label "Fixed Wing" .
+                    rdfs:label "Fixed Wing" ;
+                    <http://www.w3.org/2004/02/skos/core#definition> "An aircraft that generates lift primarily by means of wings that remain fixed relative to the aircraft during flight." .
 
 
 ###  http://purl.obolibrary.org/obo/iao/iao-edit.owl#geographic_area

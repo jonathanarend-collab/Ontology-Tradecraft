@@ -151,8 +151,13 @@ rdfs:label rdf:type owl:AnnotationProperty .
 rdfs:seeAlso rdf:type owl:AnnotationProperty .
 
 
+###  http://www.w3.org/2004/02/skos/core#definition
+<http://www.w3.org/2004/02/skos/core#definition> rdf:type owl:AnnotationProperty .
+
+
 ###  http://xmlns.com/foaf/0.1/page
 foaf:page rdf:type owl:AnnotationProperty .
+
 
 
 #################################################################
@@ -476,7 +481,8 @@ iao-edit:occ_entry_17_2010 rdf:type owl:NamedIndividual ,
                            iao-edit:industry_group "Cross-industry" ;
                            iao-edit:o_group "broad" ;
                            iao-edit:own_code 1235 ;
-                           rdfs:label "OCC: 17-2010 Aerospace Engineers" .
+                           rdfs:label "OCC: 17-2010 Aerospace Engineer" ;
+                           <http://www.w3.org/2004/02/skos/core#definition> "An engineer bearing the role of OCC: 17-2010." .
 
 
 ###  http://purl.obolibrary.org/obo/iao/iao-edit.owl#occ_entry_17_2011
@@ -510,7 +516,8 @@ iao-edit:occ_entry_17_2011 rdf:type owl:NamedIndividual ,
                            iao-edit:industry_group "Cross-industry" ;
                            iao-edit:o_group "detailed" ;
                            iao-edit:own_code 1235 ;
-                           rdfs:label "OCC: 17-2011 Aerospace Engineers" .
+                           rdfs:label "OCC: 17-2011 Aerospace Engineer" ;
+                           <http://www.w3.org/2004/02/skos/core#definition> "An engineer bearing the role of OCC: 17-2011." .
 
 
 ###  http://purl.obolibrary.org/obo/iao/iao-edit.owl#occ_entry_17_3021
@@ -544,7 +551,8 @@ iao-edit:occ_entry_17_3021 rdf:type owl:NamedIndividual ,
                            iao-edit:industry_group "Cross-industry" ;
                            iao-edit:o_group "detailed" ;
                            iao-edit:own_code 1235 ;
-                           rdfs:label "OCC: 17-3021 Aerospace Engineering and Operations Technologists and Technicians" .
+                           rdfs:label "OCC: 17-3021 Aerospace Engineer and Operations Technologist and Technician" ;
+                           <http://www.w3.org/2004/02/skos/core#definition> "An engineer bearing the role of OCC: 17-3021 Aerospace Engineer." .
 
 
 ###  http://purl.obolibrary.org/obo/iao/iao-edit.owl#soc_entry_17_2010
