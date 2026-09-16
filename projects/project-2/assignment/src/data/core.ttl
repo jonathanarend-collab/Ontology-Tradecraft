@@ -759,7 +759,7 @@ iao-edit:has_Tail_Weight_ft rdf:type owl:DatatypeProperty ;
                             rdfs:subPropertyOf owl:topDataProperty ;
                             rdfs:domain iao-edit:aircraft ;
                             rdfs:range xsd:decimal ;
-                            rdfs:label "has Tail Height FT/Tf" ;
+                            rdfs:label "has Tail Height Ft" ;
                             <http://www.w3.org/2004/02/skos/core#definition> "Relates an aircraft to its tail height expressed in feet." .
 
 
@@ -4158,7 +4158,8 @@ iao-edit:approach_process rdf:type owl:Class ;
 
 ###  http://purl.obolibrary.org/obo/iao/iao-edit.owl#approach_speed_specification
 iao-edit:approach_speed_specification rdf:type owl:Class ;
-                                      rdfs:subClassOf iao-edit:artifact_design ;
+                                      rdfs:subClassOf obo:BFO_0000040 ,
+                                                      iao-edit:artifact_design ;
                                       obo:IAO_0000115 "An information content entity that specifies an intended or prescribed aircraft approach speed." ;
                                       rdfs:label "approach speed specification" .
 
@@ -4214,7 +4215,8 @@ iao-edit:geographic_area rdf:type owl:Class ;
 
 ###  http://purl.obolibrary.org/obo/iao/iao-edit.owl#jet_engine
 iao-edit:jet_engine rdf:type owl:Class ;
-                    rdfs:subClassOf iao-edit:engine ;
+                    rdfs:subClassOf obo:BFO_0000040 ,
+                                    iao-edit:engine ;
                     rdfs:label "Jet Engine" ;
                     <http://www.w3.org/2004/02/skos/core#definition> "An engine that generates thrust by accelerating a stream of gas." .
 
