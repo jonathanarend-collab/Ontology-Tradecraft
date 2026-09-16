@@ -174,7 +174,7 @@ iao-edit:a320_neo_design_01 rdf:type owl:NamedIndividual ,
 ###  http://purl.obolibrary.org/obo/iao/iao-edit.owl#a321_111_aircraft_01
 iao-edit:a321_111_aircraft_01 rdf:type owl:NamedIndividual ,
                                        iao-edit:fixed_wing ;
-                              rdfs:label "a321_111_aircraft_01" .
+                              rdfs:label "Airbus A321-111" .
 
 
 ###  http://purl.obolibrary.org/obo/iao/iao-edit.owl#a321_111_speed_specification_01
