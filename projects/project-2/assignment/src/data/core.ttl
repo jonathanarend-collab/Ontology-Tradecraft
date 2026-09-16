@@ -472,6 +472,12 @@ iao-edit:prescribes rdf:type owl:ObjectProperty ;
                     <http://www.w3.org/2004/02/skos/core#definition> "A relation between a directive information entity and an entity, process, or course of action that the directive specifies, requires, or authorizes." .
 
 
+###  http://purl.obolibrary.org/obo/iao/iao-edit.owl#task_3_realizes
+iao-edit:task_3_realizes rdf:type owl:ObjectProperty ;
+                         rdfs:label "realizes (3)" ;
+                         <http://www.w3.org/2004/02/skos/core#definition> "a relation between a process and a realizable entity, where there is some material entity that is bearer of the realizable entity and participates in the process, and the realizable entity comes to be realized in the course of the process" .
+
+
 #################################################################
 #    Data properties
 #################################################################
@@ -944,7 +950,6 @@ iao-edit:has_model_FAA rdf:type owl:DatatypeProperty ;
 
 ###  http://purl.obolibrary.org/obo/iao/iao-edit.owl#has_numeric_value
 iao-edit:has_numeric_value rdf:type owl:DatatypeProperty ;
-                           rdfs:domain iao-edit:average_maximum_approach_speed_measurement ;
                            rdfs:range xsd:integer ;
                            obo:IAO_0000115 "Relates a measurement information entity or measurement datum to the numerical value that it represents." ;
                            rdfs:label "has numeric value" .
@@ -4157,8 +4162,7 @@ iao-edit:approach_process rdf:type owl:Class ;
 
 ###  http://purl.obolibrary.org/obo/iao/iao-edit.owl#approach_speed_specification
 iao-edit:approach_speed_specification rdf:type owl:Class ;
-                                      rdfs:subClassOf obo:BFO_0000040 ,
-                                                      iao-edit:artifact_design ;
+                                      rdfs:subClassOf iao-edit:artifact_design ;
                                       obo:IAO_0000115 "An information content entity that specifies an intended or prescribed aircraft approach speed." ;
                                       rdfs:label "approach speed specification" .
 
@@ -4382,7 +4386,7 @@ iao-edit:aircraft_designing_01 rdf:type owl:NamedIndividual ,
 ###  http://purl.obolibrary.org/obo/iao/iao-edit.owl#aircraft_processing_01
 iao-edit:aircraft_processing_01 rdf:type owl:NamedIndividual ,
                                          iao-edit:act_of_aircraft_processing ;
-                                obo:BFO_0000055 iao-edit:adaptability_evaluation_01 ;
+                                iao-edit:task_3_realizes iao-edit:adaptability_evaluation_01 ;
                                 rdfs:label "aircraft processing 01" ;
                                 <http://www.w3.org/2004/02/skos/core#definition> "A particular act of aircraft processing used in the Task 3 model." .
 
