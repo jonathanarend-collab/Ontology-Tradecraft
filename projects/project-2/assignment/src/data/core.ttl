@@ -4315,7 +4315,8 @@ iao-edit:adaptability_evaluation_01 rdf:type owl:NamedIndividual ,
 ###  http://purl.obolibrary.org/obo/iao/iao-edit.owl#adaptability_evaluation_report_01
 iao-edit:adaptability_evaluation_report_01 rdf:type owl:NamedIndividual ,
                                                     iao-edit:Adaptability_Evaluation_Report ;
-                                           obo:IAO_0000136 iao-edit:testing_equpment_01 ;
+                                           obo:IAO_0000136 iao-edit:artifact_design_03 ,
+                                                           iao-edit:testing_equpment_01 ;
                                            iao-edit:is_output_of iao-edit:adaptability_evaluation_01 ;
                                            rdfs:label "adaptability evaluation report 01" .
 
@@ -4376,6 +4377,14 @@ iao-edit:aircraft_designing_01 rdf:type owl:NamedIndividual ,
                                         iao-edit:Act_of_Aircraft_Designing ;
                                obo:BFO_0000055 iao-edit:aerospace_engineer_role_01 ;
                                rdfs:label "aircraft designing 01" .
+
+
+###  http://purl.obolibrary.org/obo/iao/iao-edit.owl#aircraft_processing_01
+iao-edit:aircraft_processing_01 rdf:type owl:NamedIndividual ,
+                                         iao-edit:act_of_aircraft_processing ;
+                                obo:BFO_0000055 iao-edit:adaptability_evaluation_report_01 ;
+                                rdfs:label "aircraft processing 01" ;
+                                <http://www.w3.org/2004/02/skos/core#definition> "A particular act of aircraft processing used in the Task 3 model." .
 
 
 ###  http://purl.obolibrary.org/obo/iao/iao-edit.owl#aircraft_testing_01
@@ -4470,7 +4479,8 @@ iao-edit:artifact_design_03 rdf:type owl:NamedIndividual ,
                                      iao-edit:artifact_design ;
                             obo:IAO_0000136 iao-edit:aircraft_03 ;
                             iao-edit:is_output_of iao-edit:aircraft_designing_01 ;
-                            rdfs:label "artifact design 03" .
+                            rdfs:label "artifact design" ,
+                                       "artifact design 03" .
 
 
 ###  http://purl.obolibrary.org/obo/iao/iao-edit.owl#average_speed_measurement_01
