@@ -185,7 +185,9 @@ iao-edit:a321_111_aircraft_01 rdf:type owl:NamedIndividual ,
 ###  http://purl.obolibrary.org/obo/iao/iao-edit.owl#a321_111_speed_specification_01
 iao-edit:a321_111_speed_specification_01 rdf:type owl:NamedIndividual ,
                                                   iao-edit:approach_speed_specification ;
+                                         obo:IAO_0000136 iao-edit:a321_111_aircraft_01 ;
                                          iao-edit:prescribes iao-edit:a321_111_aircraft_01 ;
+                                         obo:IAO_0000004 "knot" ;
                                          iao-edit:has_specified_maximum_approach_speed 142 ;
                                          rdfs:label "a321_111_speed_specification_01" .
 

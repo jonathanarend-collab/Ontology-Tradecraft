@@ -932,8 +932,8 @@ iao-edit:has_mean_wage_PRSE rdf:type owl:DatatypeProperty ;
 iao-edit:has_model_BADA rdf:type owl:DatatypeProperty ;
                         rdfs:domain iao-edit:aircraft ;
                         rdfs:range xsd:string ;
-                        obo:IAO_0000115 "Relates an aircraft to the model designation provided by the BADA source data." ;
-                        rdfs:label "has model BADA" .
+                        rdfs:label "has model BADA" ;
+                        <http://www.w3.org/2004/02/skos/core#definition> "Relates an aircraft to the model designation provided by the BADA source data." .
 
 
 ###  http://purl.obolibrary.org/obo/iao/iao-edit.owl#has_model_FAA
@@ -4267,8 +4267,8 @@ iao-edit:person rdf:type owl:Class ;
 ###  http://purl.obolibrary.org/obo/iao/iao-edit.owl#test_process
 iao-edit:test_process rdf:type owl:Class ;
                       rdfs:subClassOf obo:BFO_0000015 ;
-                      obo:IAO_0000115 "A process performed in order to obtain information about the characteristics or performance of an entity." ;
-                      rdfs:label "test process" .
+                      rdfs:label "test process" ;
+                      <http://www.w3.org/2004/02/skos/core#definition> "A process performed in order to obtain information about the characteristics or performance of an entity." .
 
 
 #################################################################
@@ -4296,7 +4296,9 @@ iao-edit:a321_111_aircraft_01 rdf:type owl:NamedIndividual ,
 ###  http://purl.obolibrary.org/obo/iao/iao-edit.owl#a321_111_speed_specification_01
 iao-edit:a321_111_speed_specification_01 rdf:type owl:NamedIndividual ,
                                                   iao-edit:approach_speed_specification ;
+                                         obo:IAO_0000136 iao-edit:a321_111_aircraft_01 ;
                                          iao-edit:prescribes iao-edit:a321_111_aircraft_01 ;
+                                         obo:IAO_0000004 "knot" ;
                                          iao-edit:has_specified_maximum_approach_speed 142 ;
                                          rdfs:label "a321_111_speed_specification_01" .
 
