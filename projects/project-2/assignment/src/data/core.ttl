@@ -4211,8 +4211,8 @@ iao-edit:geographic_area rdf:type owl:Class ;
 ###  http://purl.obolibrary.org/obo/iao/iao-edit.owl#jet_engine
 iao-edit:jet_engine rdf:type owl:Class ;
                     rdfs:subClassOf iao-edit:engine ;
-                    obo:IAO_0000115 "An engine that generates thrust by accelerating a stream of gas." ;
-                    rdfs:label "Jet Engine" .
+                    rdfs:label "Jet Engine" ;
+                    <http://www.w3.org/2004/02/skos/core#definition> "An engine that generates thrust by accelerating a stream of gas." .
 
 
 ###  http://purl.obolibrary.org/obo/iao/iao-edit.owl#measurement_datum
@@ -4592,7 +4592,8 @@ iao-edit:occ_entry_17_2010 rdf:type owl:NamedIndividual ,
                            iao-edit:industry_group "Cross-industry" ;
                            iao-edit:o_group "broad" ;
                            iao-edit:own_code 1235 ;
-                           rdfs:label "OCC: 17-2010 Aerospace Engineers" .
+                           rdfs:label "OCC: 17-2010 Aerospace Engineer" ;
+                           <http://www.w3.org/2004/02/skos/core#definition> "An engineer bearing the role of OCC: 17-2010." .
 
 
 ###  http://purl.obolibrary.org/obo/iao/iao-edit.owl#occ_entry_17_2011
@@ -4626,7 +4627,8 @@ iao-edit:occ_entry_17_2011 rdf:type owl:NamedIndividual ,
                            iao-edit:industry_group "Cross-industry" ;
                            iao-edit:o_group "detailed" ;
                            iao-edit:own_code 1235 ;
-                           rdfs:label "OCC: 17-2011 Aerospace Engineers" .
+                           rdfs:label "OCC: 17-2011 Aerospace Engineer" ;
+                           <http://www.w3.org/2004/02/skos/core#definition> "An engineer bearing the role of OCC: 17-2011." .
 
 
 ###  http://purl.obolibrary.org/obo/iao/iao-edit.owl#occ_entry_17_3021
@@ -4660,7 +4662,8 @@ iao-edit:occ_entry_17_3021 rdf:type owl:NamedIndividual ,
                            iao-edit:industry_group "Cross-industry" ;
                            iao-edit:o_group "detailed" ;
                            iao-edit:own_code 1235 ;
-                           rdfs:label "OCC: 17-3021 Aerospace Engineering and Operations Technologists and Technicians" .
+                           rdfs:label "OCC: 17-3021 Aerospace Engineer and Operations Technologist and Technician" ;
+                           <http://www.w3.org/2004/02/skos/core#definition> "An engineer bearing the role of OCC: 17-3021 Aerospace Engineer." .
 
 
 ###  http://purl.obolibrary.org/obo/iao/iao-edit.owl#soc_entry_17_2010
