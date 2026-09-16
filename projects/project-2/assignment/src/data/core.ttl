@@ -1198,7 +1198,8 @@ obo:BFO_0000028 rdf:type owl:Class .
 
 
 ###  http://purl.obolibrary.org/obo/BFO_0000040
-obo:BFO_0000040 rdf:type owl:Class .
+obo:BFO_0000040 rdf:type owl:Class ;
+                <http://www.w3.org/2004/02/skos/core#definition> "An independent continuant that is constituted by matter." .
 
 
 ###  http://purl.obolibrary.org/obo/COB_0000035
