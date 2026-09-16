@@ -474,7 +474,7 @@ iao-edit:prescribes rdf:type owl:ObjectProperty ;
 
 ###  http://purl.obolibrary.org/obo/iao/iao-edit.owl#task_3_realizes
 iao-edit:task_3_realizes rdf:type owl:ObjectProperty ;
-                         rdfs:label "realizes (3)" ;
+                         rdfs:label "realizes" ;
                          <http://www.w3.org/2004/02/skos/core#definition> "a relation between a process and a realizable entity, where there is some material entity that is bearer of the realizable entity and participates in the process, and the realizable entity comes to be realized in the course of the process" .
 
 
