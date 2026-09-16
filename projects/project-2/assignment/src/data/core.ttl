@@ -151,6 +151,10 @@ rdfs:label rdf:type owl:AnnotationProperty .
 rdfs:seeAlso rdf:type owl:AnnotationProperty .
 
 
+###  http://www.w3.org/2004/02/skos/core#definition
+<http://www.w3.org/2004/02/skos/core#definition> rdf:type owl:AnnotationProperty .
+
+
 ###  http://xmlns.com/foaf/0.1/page
 foaf:page rdf:type owl:AnnotationProperty .
 
@@ -4158,8 +4162,8 @@ iao-edit:approach_speed_specification rdf:type owl:Class ;
 ###  http://purl.obolibrary.org/obo/iao/iao-edit.owl#artifact_design
 iao-edit:artifact_design rdf:type owl:Class ;
                          rdfs:subClassOf obo:IAO_0000030 ;
-                         obo:IAO_0000115 "An information content entity containing technical design specifications for aircraft." ;
-                         rdfs:label "Artifact Design" .
+                         rdfs:label "Artifact Design" ;
+                         <http://www.w3.org/2004/02/skos/core#definition> "An information content entity containing technical design specifications for aircraft." .
 
 
 ###  http://purl.obolibrary.org/obo/iao/iao-edit.owl#average_maximum_approach_speed_measurement
