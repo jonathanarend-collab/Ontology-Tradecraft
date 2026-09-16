@@ -4194,7 +4194,7 @@ iao-edit:employment_population_size_quality rdf:type owl:Class ;
 
 ###  http://purl.obolibrary.org/obo/iao/iao-edit.owl#engine
 iao-edit:engine rdf:type owl:Class ;
-                rdfs:subClassOf obo:BFO_0000030 ;
+                rdfs:subClassOf obo:BFO_0000040 ;
                 obo:IAO_0000115 "A material artifact designed to convert energy into mechanical force or thrust." ;
                 rdfs:label "Engine" .
 
@@ -4215,8 +4215,7 @@ iao-edit:geographic_area rdf:type owl:Class ;
 
 ###  http://purl.obolibrary.org/obo/iao/iao-edit.owl#jet_engine
 iao-edit:jet_engine rdf:type owl:Class ;
-                    rdfs:subClassOf obo:BFO_0000040 ,
-                                    iao-edit:engine ;
+                    rdfs:subClassOf obo:BFO_0000040 ;
                     rdfs:label "Jet Engine" ;
                     <http://www.w3.org/2004/02/skos/core#definition> "An engine that generates thrust by accelerating a stream of gas." .
 
