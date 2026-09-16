@@ -197,7 +197,6 @@ obo:IAO_0000136 rdf:type owl:ObjectProperty ;
                 rdfs:range obo:BFO_0000001 ;
                 obo:IAO_0000112 "This document is about information artifacts and their representations"@en ;
                 obo:IAO_0000114 obo:IAO_0000125 ;
-                obo:IAO_0000115 "A (currently) primitive relation that relates an information artifact to an entity."@en ;
                 obo:IAO_0000116 """7/6/2009 Alan Ruttenberg. Following discussion with Jonathan Rees, and introduction of \"mentions\" relation. Weaken the is_about relationship to be primitive. 
 
 We will try to build it back up by elaborating the various subproperties that are more precisely defined.
@@ -205,7 +204,8 @@ We will try to build it back up by elaborating the various subproperties that ar
 Some currently missing phenomena that should be considered \"about\" are predications - \"The only person who knows the answer is sitting beside me\" , Allegory, Satire, and other literary forms that can be topical without explicitly mentioning the topic."""@en ;
                 obo:IAO_0000117 "person:Alan Ruttenberg"@en ;
                 obo:IAO_0000119 "Smith, Ceusters, Ruttenberg, 2000 years of philosophy"@en ;
-                rdfs:label "is about"@en .
+                rdfs:label "is about"@en ;
+                <http://www.w3.org/2004/02/skos/core#definition> "A (currently) primitive relation that relates an information artifact to an entity."@en .
 
 
 ###  http://purl.obolibrary.org/obo/IAO_0000142
@@ -414,8 +414,8 @@ obo:RO_0000059 rdf:type owl:ObjectProperty .
 iao-edit:has_area rdf:type owl:ObjectProperty ;
                   rdfs:domain iao-edit:OEWS_occupation_estimate_entry ;
                   rdfs:range iao-edit:geographic_area ;
-                  obo:IAO_0000115 "Relates a statistical estimate entry to the geographic area to which the estimate applies." ;
-                  rdfs:label "has area" .
+                  rdfs:label "has area" ;
+                  <http://www.w3.org/2004/02/skos/core#definition> "Relates a statistical estimate entry to the geographic area to which the estimate applies." .
 
 
 ###  http://purl.obolibrary.org/obo/iao/iao-edit.owl#has_continuant_part
@@ -446,8 +446,8 @@ iao-edit:inheres_in rdf:type owl:ObjectProperty ;
 iao-edit:is_measurement_unit rdf:type owl:ObjectProperty ;
                              rdfs:domain obo:IAO_0000030 ;
                              rdfs:range obo:IAO_0000030 ;
-                             obo:IAO_0000115 "A relation between a measurement unit and the type of quantity or measurement that the unit is used to express." ;
-                             rdfs:label "is measurement unit of" .
+                             rdfs:label "is measurement unit of" ;
+                             <http://www.w3.org/2004/02/skos/core#definition> "A relation between a measurement unit and the type of quantity or measurement that the unit is used to express." .
 
 
 ###  http://purl.obolibrary.org/obo/iao/iao-edit.owl#is_output_of
@@ -462,16 +462,16 @@ iao-edit:is_output_of rdf:type owl:ObjectProperty ;
 iao-edit:is_temporal_part_of rdf:type owl:ObjectProperty ;
                              rdfs:domain obo:BFO_0000003 ;
                              rdfs:range obo:BFO_0000003 ;
-                             obo:IAO_0000115 "A relation between two occurrents in which the first occurrent occupies a temporal region that is part of the temporal region occupied by the second occurrent." ;
-                             rdfs:label "is temporal part of" .
+                             rdfs:label "is temporal part of" ;
+                             <http://www.w3.org/2004/02/skos/core#definition> "A relation between two occurrents in which the first occurrent occupies a temporal region that is part of the temporal region occupied by the second occurrent." .
 
 
 ###  http://purl.obolibrary.org/obo/iao/iao-edit.owl#prescribes
 iao-edit:prescribes rdf:type owl:ObjectProperty ;
                     rdfs:domain iao-edit:approach_speed_specification ;
                     rdfs:range iao-edit:aircraft ;
-                    obo:IAO_0000115 "A relation between a directive information entity and an entity, process, or course of action that the directive specifies, requires, or authorizes." ;
-                    rdfs:label "prescribes" .
+                    rdfs:label "prescribes" ;
+                    <http://www.w3.org/2004/02/skos/core#definition> "A relation between a directive information entity and an entity, process, or course of action that the directive specifies, requires, or authorizes." .
 
 
 #################################################################
@@ -595,8 +595,8 @@ iao-edit:has_LAHSO rdf:type owl:DatatypeProperty ;
 iao-edit:has_Length_ft rdf:type owl:DatatypeProperty ;
                        rdfs:domain iao-edit:aircraft ;
                        rdfs:range xsd:decimal ;
-                       obo:IAO_0000115 "Relates an aircraft to its overall length expressed in feet." ;
-                       rdfs:label "has Length Ft" .
+                       rdfs:label "has Length Ft" ;
+                       <http://www.w3.org/2004/02/skos/core#definition> "Relates an aircraft to its overall length expressed in feet." .
 
 
 ###  http://purl.obolibrary.org/obo/iao/iao-edit.owl#has_MALW_Lb
@@ -759,8 +759,8 @@ iao-edit:has_Tail_Weight_ft rdf:type owl:DatatypeProperty ;
                             rdfs:subPropertyOf owl:topDataProperty ;
                             rdfs:domain iao-edit:aircraft ;
                             rdfs:range xsd:decimal ;
-                            obo:IAO_0000115 "Relates an aircraft to its tail height expressed in feet." ;
-                            rdfs:label "has Tail Height FT/Tf" .
+                            rdfs:label "has Tail Height FT/Tf" ;
+                            <http://www.w3.org/2004/02/skos/core#definition> "Relates an aircraft to its tail height expressed in feet." .
 
 
 ###  http://purl.obolibrary.org/obo/iao/iao-edit.owl#has_Two_Wake_Category_Appx_A
@@ -940,8 +940,8 @@ iao-edit:has_model_BADA rdf:type owl:DatatypeProperty ;
 iao-edit:has_model_FAA rdf:type owl:DatatypeProperty ;
                        rdfs:domain iao-edit:aircraft ;
                        rdfs:range xsd:string ;
-                       obo:IAO_0000115 "Relates an aircraft to the model designation provided by the FAA source data." ;
-                       rdfs:label "has model FAA" .
+                       rdfs:label "has model FAA" ;
+                       <http://www.w3.org/2004/02/skos/core#definition> "Relates an aircraft to the model designation provided by the FAA source data." .
 
 
 ###  http://purl.obolibrary.org/obo/iao/iao-edit.owl#has_numeric_value
@@ -1020,15 +1020,15 @@ iao-edit:is_hourly_only rdf:type owl:DatatypeProperty ;
 ###  http://purl.obolibrary.org/obo/iao/iao-edit.owl#o_group
 iao-edit:o_group rdf:type owl:DatatypeProperty ;
                  rdfs:range xsd:string ;
-                 obo:IAO_0000115 "Relates an OEWS occupation estimate entry to its SOC occupation-level designation." ;
-                 rdfs:label "o group" .
+                 rdfs:label "o group" ;
+                 <http://www.w3.org/2004/02/skos/core#definition> "Relates an OEWS occupation estimate entry to its SOC occupation-level designation." .
 
 
 ###  http://purl.obolibrary.org/obo/iao/iao-edit.owl#own_code
 iao-edit:own_code rdf:type owl:DatatypeProperty ;
                   rdfs:range xsd:integer ;
-                  obo:IAO_0000115 "Relates an OEWS occupation estimate entry to the ownership-type code reported in the source dataset." ;
-                  rdfs:label "own code" .
+                  rdfs:label "own code" ;
+                  <http://www.w3.org/2004/02/skos/core#definition> "Relates an OEWS occupation estimate entry to the ownership-type code reported in the source dataset." .
 
 
 ###  http://purl.obolibrary.org/obo/iao/iao-edit.owl#has_number_of_engines_=_2
@@ -1181,6 +1181,10 @@ obo:BFO_0000009 rdf:type owl:Class .
 
 ###  http://purl.obolibrary.org/obo/BFO_0000018
 obo:BFO_0000018 rdf:type owl:Class .
+
+
+###  http://purl.obolibrary.org/obo/BFO_0000019
+obo:BFO_0000019 <http://www.w3.org/2004/02/skos/core#definition> "Describes a quality which inheres in a material entity." .
 
 
 ###  http://purl.obolibrary.org/obo/BFO_0000023
@@ -4022,8 +4026,8 @@ iao-edit:Act_of_Equipment_Operation rdf:type owl:Class ;
 ###  http://purl.obolibrary.org/obo/iao/iao-edit.owl#Act_of_Measuring
 iao-edit:Act_of_Measuring rdf:type owl:Class ;
                           rdfs:subClassOf obo:BFO_0000015 ;
-                          obo:IAO_0000115 "A process in which a quality of an entity is measured and a measurement datum is generated." ;
-                          rdfs:label "Act of Measuring" .
+                          rdfs:label "Act of Measuring" ;
+                          <http://www.w3.org/2004/02/skos/core#definition> "A process in which a quality of an entity is measured and a measurement datum is generated." .
 
 
 ###  http://purl.obolibrary.org/obo/iao/iao-edit.owl#Act_of_Recommending_Testing_Improvements
@@ -4050,8 +4054,8 @@ iao-edit:Act_of_Test_Data_Recording rdf:type owl:Class ;
 ###  http://purl.obolibrary.org/obo/iao/iao-edit.owl#Adaptability_Evaluation
 iao-edit:Adaptability_Evaluation rdf:type owl:Class ;
                                  rdfs:subClassOf iao-edit:occupation ;
-                                 obo:IAO_0000115 "An evaluation process in which the suitability or adaptability of material or equipment for an intended aircraft design or manufacturing context is assessed." ;
-                                 rdfs:label "Adaptability Evaluation" .
+                                 rdfs:label "Adaptability Evaluation" ;
+                                 <http://www.w3.org/2004/02/skos/core#definition> "An evaluation process in which the suitability or adaptability of material or equipment for an intended aircraft design or manufacturing context is assessed." .
 
 
 ###  http://purl.obolibrary.org/obo/iao/iao-edit.owl#Adaptability_Evaluation_Report
@@ -4113,8 +4117,8 @@ iao-edit:Testing_Improvement_Recommendation rdf:type owl:Class ;
 ###  http://purl.obolibrary.org/obo/iao/iao-edit.owl#act_of_aircraft_processing
 iao-edit:act_of_aircraft_processing rdf:type owl:Class ;
                                     rdfs:subClassOf iao-edit:occupation ;
-                                    obo:IAO_0000115 "An occupation activity involving the designing, constructing, testing, or other processing of an aircraft." ;
-                                    rdfs:label "Act of Aircraft Processing" .
+                                    rdfs:label "Act of Aircraft Processing" ;
+                                    <http://www.w3.org/2004/02/skos/core#definition> "An occupation activity involving the designing, constructing, testing, or other processing of an aircraft." .
 
 
 ###  http://purl.obolibrary.org/obo/iao/iao-edit.owl#aerospace_engineer_role
@@ -4176,8 +4180,8 @@ iao-edit:average_maximum_approach_speed_measurement rdf:type owl:Class ;
 ###  http://purl.obolibrary.org/obo/iao/iao-edit.owl#employment_count_measurement_datum
 iao-edit:employment_count_measurement_datum rdf:type owl:Class ;
                                             rdfs:subClassOf iao-edit:measurement_datum ;
-                                            obo:IAO_0000115 "A measurement datum representing an estimated number of employed persons." ;
-                                            rdfs:label "employment count measurement datum" .
+                                            rdfs:label "total employment" ;
+                                            <http://www.w3.org/2004/02/skos/core#definition> "A measurement datum representing an estimated number of employed persons." .
 
 
 ###  http://purl.obolibrary.org/obo/iao/iao-edit.owl#employment_population_size_quality
@@ -4225,8 +4229,8 @@ iao-edit:measurement_datum rdf:type owl:Class ;
 ###  http://purl.obolibrary.org/obo/iao/iao-edit.owl#measurement_unit
 iao-edit:measurement_unit rdf:type owl:Class ;
                           rdfs:subClassOf obo:IAO_0000030 ;
-                          obo:IAO_0000115 "An information entity that specifies a standardized unit used to express the magnitude of a measurement." ;
-                          rdfs:label "measurement unit" .
+                          rdfs:label "measurement unit" ;
+                          <http://www.w3.org/2004/02/skos/core#definition> "An information entity that specifies a standardized unit used to express the magnitude of a measurement." .
 
 
 ###  http://purl.obolibrary.org/obo/iao/iao-edit.owl#occupation
