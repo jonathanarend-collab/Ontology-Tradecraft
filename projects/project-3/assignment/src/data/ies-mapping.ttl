@@ -31,6 +31,7 @@
 @prefix sh:      <http://www.w3.org/ns/shacl#> .
 @prefix vann:    <http://purl.org/vocab/vann/> .
 @prefix ies:     <http://ies.data.gov.uk/ontology/ies4#> .
+@prefix obo:     <http://purl.obolibrary.org/obo/> .
 
 # Ontology Definition & Metadata
 ies: a owl:Ontology ;
@@ -201,6 +202,7 @@ ies:ArbitraryOverlap a rdfs:Class ;
 
 ies:ArbitraryPeriod a rdfs:Class ;
     rdfs:label "Arbitrary Period"^^xsd:string ;
+    rdfs:subClassOf obo:BFO_0000008 ;
     dcterms:identifier "{68BA678C-DCA8-453e-BFCC-D9FB48339D99}" ;
     rdfs:comment "A PeriodOfTime for which is not delineated by a particular clock period - e.g. not a year, not a month, not a day, not an hour, etc. Instead it is one which is most clearly specified in terms of start and end that are ParticularPeriods." ;
     rdfs:subClassOf ies:PeriodOfTime .
@@ -2357,6 +2359,7 @@ ies:PartOfFacility a rdfs:Class ;
 
 ies:ParticularPeriod a rdfs:Class ;
     rdfs:label "Particular Period"^^xsd:string ;
+    rdfs:subClassOf <http://purl.obolibrary.org/obo/BFO_0000008> ;
     dcterms:identifier "{2173F463-524C-457c-B106-51322F64F122}" ;
     rdfs:comment """A PeriodOfTime that is a specific, contiguous extent of time.
 
@@ -2423,6 +2426,7 @@ ies:PeaceTreaty a rdfs:Class ;
 
 ies:PeriodOfTime a rdfs:Class ;
     rdfs:label "Period Of Time"^^xsd:string ;
+    rdfs:subClassOf <http://purl.obolibrary.org/obo/BFO_0000008> ;
     dcterms:identifier "{3FDFA898-C340-4279-8B3C-275359D5B02D}" ;
     rdfs:comment "A PeriodOfTime is an Element whose spatial extent is everywhere, but whose temporal extent is limited. " ;
     rdfs:subClassOf ies:Element .
@@ -2659,6 +2663,7 @@ ies:Reconnaisance a rdfs:Class ;
 
 ies:RecurringPeriod a rdfs:Class ;
     rdfs:label "Recurring Period"^^xsd:string ;
+    rdfs:subClassOf <http://purl.obolibrary.org/obo/BFO_0000008> ;
     dcterms:identifier "{986E66AC-9092-410b-88AD-30B86EFC32DD}" ;
     rdfs:comment """A PeriodOfTime that is composed of regularly recurring periods of time.
 

@@ -12,6 +12,7 @@
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 @prefix vaem: <http://www.linkedmodel.org/schema/vaem#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix ccom: <https://www.commoncoreontologies.org/> .
 
 dc:contributor
   rdf:type owl:AnnotationProperty ;
@@ -116,6 +117,7 @@ qudt-v1:AmountOfSubstanceUnit
 qudt-v1:AngleUnit
   rdf:type owl:Class ;
   dc:description "All units relating to specificaiton of angles. " ;
+  rdfs:subClassOf <https://www.commoncoreontologies.org/ont00000707> ;
   rdfs:label "Angle unit" ;
   rdfs:subClassOf qudt-v1:DimensionlessUnit ;
   rdfs:subClassOf qudt-v1:SpaceAndTimeUnit ;
