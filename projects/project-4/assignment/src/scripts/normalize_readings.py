@@ -3,25 +3,26 @@ from __future__ import annotations
 
 from pathlib import Path
 from typing import Any, Dict, List
-import json
 import datetime as _dt
+import json
 
 import pandas as pd
 from dateutil import parser as dateparser
 
 
 # ============================================================
-# PATHS RESOLVED RELATIVE TO THIS SCRIPT
+# PATHS
 # ============================================================
 
-SCRIPT_DIR = Path(__file__).resolve().parent          # .../src/scripts
-SRC_DIR = SCRIPT_DIR.parent                          # .../src
-DATA_DIR = SRC_DIR / "data"                          # .../src/data
+SCRIPT_DIR = Path(__file__).resolve().parent
+SRC_DIR = SCRIPT_DIR.parent
+DATA_DIR = SRC_DIR / "data"
 
-IN_A = Path("src/data/sensor_A.csv")
-IN_B = Path("src/data/sensor_B.json")
-IN_C = Path("src/data/sensor_C.csv")
-OUT  = Path("src/data/readings_normalized.csv")
+IN_A = DATA_DIR / "sensor_A.csv"
+IN_B = DATA_DIR / "sensor_B.json"
+IN_C = DATA_DIR / "sensor_C.csv"
+
+OUT = DATA_DIR / "readings_normalized.csv"
 
 
 # ============================================================
@@ -43,10 +44,10 @@ CANON = [
 
 def _to_iso_utc(x: Any) -> str | None:
     """
-    Parse any timestamp to ISO-8601 in UTC with 'Z'.
+    Parse a timestamp to ISO-8601 UTC format.
 
-    If a timestamp has no timezone information, this function
-    assumes UTC.
+    If the timestamp has no timezone information,
+    assume UTC.
     """
 
     if x is None:
@@ -78,10 +79,9 @@ def _to_iso_utc(x: Any) -> str | None:
 
 def _to_float(x: Any) -> float | None:
     """
-    Convert a value to float.
+    Convert a reading to a float.
 
-    Invalid or blank values return None so they can later
-    be removed from the normalized dataset.
+    Invalid or blank values return None.
     """
 
     if x is None:
@@ -101,11 +101,10 @@ def _to_float(x: Any) -> float | None:
 
 def _norm_artifact_id(x: Any) -> str | None:
     """
-    Normalize artifact/device identifiers.
+    Normalize artifact identifiers.
 
-    Sensor A uses 'Chiller 3' while Sensor B uses 'Chiller-3'.
-    These represent the same artifact, so both are normalized
-    to the same canonical identifier.
+    Sensor A uses 'Chiller 3' while Sensor B uses
+    'Chiller-3'. Normalize both to 'Chiller-3'.
     """
 
     if x is None:
@@ -126,7 +125,7 @@ def _norm_artifact_id(x: Any) -> str | None:
 
 def _norm_kind(k: Any) -> str | None:
     """
-    Normalize reading type/kind labels.
+    Normalize measurement type labels.
     """
 
     if k is None:
@@ -151,15 +150,14 @@ def _norm_kind(k: Any) -> str | None:
     if low == "resistance":
         return "resistance"
 
-    # Fallback for an unexpected measurement kind.
     return s
 
 
 def _norm_unit(u: Any) -> str | None:
     """
-    Normalize spelling and abbreviations of unit labels.
+    Normalize unit spelling and abbreviations.
 
-    Numeric unit conversion happens later.
+    Numeric unit conversions are performed later.
     """
 
     if u is None:
@@ -172,20 +170,14 @@ def _norm_unit(u: Any) -> str | None:
 
     low = s.lower()
 
-    # -------------------------
     # Temperature
-    # -------------------------
-
     if low in {"celsius", "°c", "c"}:
         return "C"
 
     if low in {"fahrenheit", "°f", "f"}:
         return "F"
 
-    # -------------------------
     # Pressure
-    # -------------------------
-
     if low == "psi":
         return "psi"
 
@@ -196,10 +188,7 @@ def _norm_unit(u: Any) -> str | None:
     }:
         return "kPa"
 
-    # -------------------------
     # Electrical
-    # -------------------------
-
     if low in {
         "v",
         "volt",
@@ -215,37 +204,38 @@ def _norm_unit(u: Any) -> str | None:
     }:
         return "ohm"
 
-    # Pass through unexpected units.
     return s
 
 
 # ============================================================
-# LOAD SENSOR A
+# SENSOR A / SENSOR C CSV LOADER
 # ============================================================
 
 def load_sensor_a(path: Path) -> pd.DataFrame:
     """
-    Sensor A CSV columns:
+    Load CSV files using the Sensor A-style schema:
 
     Device Name
     Reading Type
     Reading Value
     Units
     Time (Local)
-
-    Maps them to the canonical Project 4 columns.
     """
 
     if not path.exists():
-        raise FileNotFoundError(
-            f"Missing {path}"
-        )
+        raise FileNotFoundError(f"Missing {path}")
 
     df = pd.read_csv(
         path,
         dtype=str,
         keep_default_na=False,
     )
+
+    # Remove whitespace from headers.
+    df.columns = [
+        column.strip()
+        for column in df.columns
+    ]
 
     rename_map = {
         "Device Name": "artifact_id",
@@ -255,79 +245,51 @@ def load_sensor_a(path: Path) -> pd.DataFrame:
         "Time (Local)": "timestamp",
     }
 
-    # Remove accidental whitespace from column names.
-    fixed_cols = {
-        c: c.strip()
-        for c in df.columns
-    }
+    df = df.rename(columns=rename_map)
 
-    df = df.rename(
-        columns=fixed_cols
-    )
-
-    df = df.rename(
-        columns={
-            k: v
-            for k, v in rename_map.items()
-            if k in df.columns
-        }
-    )
-
-    # Ensure every canonical column exists.
-    for c in CANON:
-        if c not in df.columns:
-            df[c] = None
+    # Make sure every canonical column exists.
+    for column in CANON:
+        if column not in df.columns:
+            df[column] = None
 
     return df[CANON].copy()
 
 
 # ============================================================
-# LOAD SENSOR B
+# SENSOR B JSON LOADER
 # ============================================================
 
 def load_sensor_b(path: Path) -> pd.DataFrame:
     """
-    Flatten the nested Sensor B JSON structure into the
+    Flatten the nested Sensor B JSON structure into
     canonical Project 4 columns.
     """
 
     if not path.exists():
-        raise FileNotFoundError(
-            f"Missing {path}"
-        )
+        raise FileNotFoundError(f"Missing {path}")
 
     obj = json.loads(
-        path.read_text(
-            encoding="utf-8"
-        )
+        path.read_text(encoding="utf-8")
     )
 
-    readings = (
-        obj.get("readings", [])
-        if isinstance(obj, dict)
-        else []
-    )
+    if isinstance(obj, dict):
+        readings = obj.get("readings", [])
+    else:
+        readings = []
 
     rows: List[Dict[str, Any]] = []
 
     for entry in readings:
+        entity = entry.get("entity_id")
 
-        entity = entry.get(
-            "entity_id"
-        )
-
-        for d in entry.get(
-            "data",
-            [],
-        ) or []:
-
+        for reading in entry.get("data", []) or []:
             rows.append(
                 {
                     "artifact_id": entity,
-                    "sdc_kind": d.get("kind"),
-                    "unit_label": d.get("unit"),
-                    "value": d.get("value"),
-                    "timestamp": d.get("time"),
+                    "sdc_kind": reading.get("kind"),
+                    "unit_label": reading.get("unit"),
+                    "value": reading.get("value"),
+                    "timestamp": reading.get("time"),
                 }
             )
 
@@ -346,26 +308,23 @@ def normalize_and_clean(
 ) -> pd.DataFrame:
 
     # --------------------------------------------------------
-    # 1. Trim whitespace from string fields.
+    # 1. Trim whitespace.
     # --------------------------------------------------------
 
-    for col in [
+    for column in [
         "artifact_id",
         "sdc_kind",
         "unit_label",
         "timestamp",
     ]:
-        df[col] = (
-            df[col]
+        df[column] = (
+            df[column]
             .astype(str)
             .str.strip()
         )
 
-
     # --------------------------------------------------------
     # 2. Normalize artifact identifiers.
-    #
-    # Chiller 3 -> Chiller-3
     # --------------------------------------------------------
 
     df["artifact_id"] = (
@@ -373,12 +332,8 @@ def normalize_and_clean(
         .apply(_norm_artifact_id)
     )
 
-
     # --------------------------------------------------------
-    # 3. Normalize measurement kind labels.
-    #
-    # temp -> temperature
-    # Temperature -> temperature
+    # 3. Normalize measurement-kind labels.
     # --------------------------------------------------------
 
     df["sdc_kind"] = (
@@ -386,13 +341,8 @@ def normalize_and_clean(
         .apply(_norm_kind)
     )
 
-
     # --------------------------------------------------------
-    # 4. Normalize unit spellings.
-    #
-    # volt -> V
-    # Celsius -> C
-    # etc.
+    # 4. Normalize unit labels.
     # --------------------------------------------------------
 
     df["unit_label"] = (
@@ -400,11 +350,8 @@ def normalize_and_clean(
         .apply(_norm_unit)
     )
 
-
     # --------------------------------------------------------
-    # 5. Convert values to numeric.
-    #
-    # Invalid values such as "not_a_number" become None.
+    # 5. Convert values to numbers.
     # --------------------------------------------------------
 
     df["value"] = (
@@ -412,9 +359,8 @@ def normalize_and_clean(
         .apply(_to_float)
     )
 
-
     # --------------------------------------------------------
-    # 6. Convert timestamps to ISO-8601.
+    # 6. Normalize timestamps.
     # --------------------------------------------------------
 
     df["timestamp"] = (
@@ -422,39 +368,24 @@ def normalize_and_clean(
         .apply(_to_iso_utc)
     )
 
-
     # ========================================================
     # 7. CONVERT TEMPERATURE TO CELSIUS
-    # ========================================================
-    #
-    # Canonical temperature unit:
-    #
-    #     C
-    #
-    # Formula:
-    #
-    #     C = (F - 32) * 5 / 9
-    #
-    # Examples:
-    #
-    #     212 F -> 100 C
-    #      68 F -> 20 C
     # ========================================================
 
     fahrenheit_mask = (
         (df["sdc_kind"] == "temperature")
         & (df["unit_label"] == "F")
-        & (df["value"].notna())
+        & df["value"].notna()
     )
 
     df.loc[
         fahrenheit_mask,
-        "value"
+        "value",
     ] = (
         (
             df.loc[
                 fahrenheit_mask,
-                "value"
+                "value",
             ]
             - 32
         )
@@ -464,55 +395,37 @@ def normalize_and_clean(
 
     df.loc[
         fahrenheit_mask,
-        "unit_label"
+        "unit_label",
     ] = "C"
 
-
     # ========================================================
-    # 8. CONVERT PRESSURE TO KILOPASCALS
-    # ========================================================
-    #
-    # Canonical pressure unit:
-    #
-    #     kPa
-    #
-    # Conversion:
-    #
-    #     1 psi = 6.894757293168 kPa
-    #
-    # Example:
-    #
-    #     14.7 psi -> approximately 101.353 kPa
+    # 8. CONVERT PRESSURE TO KPA
     # ========================================================
 
     psi_mask = (
         (df["sdc_kind"] == "pressure")
         & (df["unit_label"] == "psi")
-        & (df["value"].notna())
+        & df["value"].notna()
     )
 
     df.loc[
         psi_mask,
-        "value"
+        "value",
     ] = (
         df.loc[
             psi_mask,
-            "value"
+            "value",
         ]
         * 6.894757293168
     )
 
     df.loc[
         psi_mask,
-        "unit_label"
+        "unit_label",
     ] = "kPa"
 
-
     # --------------------------------------------------------
-    # 9. Round converted numeric values.
-    #
-    # This prevents unnecessarily long floating-point values
-    # such as 101.3529322095696.
+    # 9. Round converted values.
     # --------------------------------------------------------
 
     df["value"] = (
@@ -520,9 +433,8 @@ def normalize_and_clean(
         .round(6)
     )
 
-
     # --------------------------------------------------------
-    # 10. Diagnostics before dropping invalid rows.
+    # 10. Diagnostics.
     # --------------------------------------------------------
 
     total = len(df)
@@ -532,21 +444,17 @@ def normalize_and_clean(
             df["artifact_id"].isna().sum()
             + (df["artifact_id"] == "").sum()
         ),
-
         "sdc_kind": int(
             df["sdc_kind"].isna().sum()
             + (df["sdc_kind"] == "").sum()
         ),
-
         "unit_label": int(
             df["unit_label"].isna().sum()
             + (df["unit_label"] == "").sum()
         ),
-
         "value": int(
             df["value"].isna().sum()
         ),
-
         "timestamp": int(
             df["timestamp"].isna().sum()
         ),
@@ -559,7 +467,6 @@ def normalize_and_clean(
         missing_counts,
     )
 
-
     # --------------------------------------------------------
     # 11. Replace blank strings with NA.
     # --------------------------------------------------------
@@ -568,18 +475,8 @@ def normalize_and_clean(
         {"": pd.NA}
     )
 
-
     # --------------------------------------------------------
-    # 12. Drop rows missing any critical value.
-    #
-    # This removes:
-    #
-    # Sensor A:
-    #   not_a_number
-    #   blank pressure value
-    #
-    # Sensor B:
-    #   null temperature value
+    # 12. Drop invalid rows.
     # --------------------------------------------------------
 
     df = df.dropna(
@@ -592,12 +489,8 @@ def normalize_and_clean(
         ]
     )
 
-
     # ========================================================
     # 13. VERIFY UNIT CONSISTENCY
-    # ========================================================
-    #
-    # These are the canonical units expected after conversion.
     # ========================================================
 
     expected_units = {
@@ -608,24 +501,21 @@ def normalize_and_clean(
     }
 
     for kind, expected_unit in expected_units.items():
-
         observed_units = set(
             df.loc[
                 df["sdc_kind"] == kind,
-                "unit_label"
+                "unit_label",
             ]
             .dropna()
             .unique()
         )
 
         if observed_units and observed_units != {expected_unit}:
-
             raise ValueError(
                 f"Inconsistent units for {kind}. "
                 f"Expected only '{expected_unit}', "
                 f"but found {sorted(observed_units)}"
             )
-
 
     # --------------------------------------------------------
     # 14. Sort deterministically.
@@ -641,9 +531,8 @@ def normalize_and_clean(
         .reset_index(drop=True)
     )
 
-
     # --------------------------------------------------------
-    # 15. Put columns in exact canonical order.
+    # 15. Put columns in canonical order.
     # --------------------------------------------------------
 
     df = df[CANON]
@@ -655,39 +544,19 @@ def normalize_and_clean(
 # MAIN
 # ============================================================
 
-def main():
+def main() -> None:
 
-    print(
-        "[paths] A:",
-        IN_A
-    )
-
-    print(
-        "[paths] B:",
-        IN_B
-    )
-
-   print(
-        "[paths] C:",
-        IN_C
-    )
-
+    print("[paths] A:", IN_A)
+    print("[paths] B:", IN_B)
+    print("[paths] C:", IN_C)
 
     # --------------------------------------------------------
-    # Load both raw sources.
+    # Load all three sources.
     # --------------------------------------------------------
 
-    df_a = load_sensor_a(
-        IN_A
-    )
-
-    df_b = load_sensor_b(
-        IN_B
-    )
-    df_c = load_sensor_a(
-        IN_C
-    )
-
+    df_a = load_sensor_a(IN_A)
+    df_b = load_sensor_b(IN_B)
+    df_c = load_sensor_a(IN_C)
 
     print(
         f"[normalize_readings] "
@@ -698,37 +567,35 @@ def main():
         f"[normalize_readings] "
         f"Input B rows: {len(df_b)}"
     )
-  print(
+
+    print(
         f"[normalize_readings] "
         f"Input C rows: {len(df_c)}"
     )
 
-
     # --------------------------------------------------------
-    # Combine both sources.
+    # Combine all sources.
     # --------------------------------------------------------
 
     combined = pd.concat(
         [
             df_a,
             df_b,
-            df_c
+            df_c,
         ],
         ignore_index=True,
     )
 
-
     # --------------------------------------------------------
-    # Normalize and clean the combined data.
+    # Normalize and clean.
     # --------------------------------------------------------
 
     cleaned = normalize_and_clean(
         combined
     )
 
-
     # --------------------------------------------------------
-    # Create output directory if necessary.
+    # Save output.
     # --------------------------------------------------------
 
     OUT.parent.mkdir(
@@ -736,20 +603,10 @@ def main():
         exist_ok=True,
     )
 
-
-    # --------------------------------------------------------
-    # Save canonical normalized CSV.
-    # --------------------------------------------------------
-
     cleaned.to_csv(
         OUT,
         index=False,
     )
-
-
-    # --------------------------------------------------------
-    # Report results.
-    # --------------------------------------------------------
 
     print(
         f"[normalize_readings] "
@@ -761,9 +618,8 @@ def main():
         f"Wrote       : {OUT}"
     )
 
-
     # --------------------------------------------------------
-    # Show unit consistency.
+    # Show final canonical units.
     # --------------------------------------------------------
 
     print(
@@ -774,11 +630,10 @@ def main():
     for kind in sorted(
         cleaned["sdc_kind"].unique()
     ):
-
         units = sorted(
             cleaned.loc[
                 cleaned["sdc_kind"] == kind,
-                "unit_label"
+                "unit_label",
             ].unique()
         )
 
