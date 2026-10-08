@@ -49,7 +49,6 @@ def _to_iso_utc(x: Any) -> str | None:
     If the timestamp has no timezone information,
     assume UTC.
     """
-
     if x is None:
         return None
 
@@ -83,7 +82,6 @@ def _to_float(x: Any) -> float | None:
 
     Invalid or blank values return None.
     """
-
     if x is None:
         return None
 
@@ -106,7 +104,6 @@ def _norm_artifact_id(x: Any) -> str | None:
     Sensor A uses 'Chiller 3' while Sensor B uses
     'Chiller-3'. Normalize both to 'Chiller-3'.
     """
-
     if x is None:
         return None
 
@@ -127,7 +124,6 @@ def _norm_kind(k: Any) -> str | None:
     """
     Normalize measurement type labels.
     """
-
     if k is None:
         return None
 
@@ -159,7 +155,6 @@ def _norm_unit(u: Any) -> str | None:
 
     Numeric unit conversions are performed later.
     """
-
     if u is None:
         return None
 
@@ -187,6 +182,13 @@ def _norm_unit(u: Any) -> str | None:
         "kilopascals",
     }:
         return "kPa"
+
+    if low in {
+        "pa",
+        "pascal",
+        "pascals",
+    }:
+        return "Pa"
 
     # Electrical
     if low in {
@@ -221,7 +223,6 @@ def load_sensor_a(path: Path) -> pd.DataFrame:
     Units
     Time (Local)
     """
-
     if not path.exists():
         raise FileNotFoundError(f"Missing {path}")
 
@@ -264,7 +265,6 @@ def load_sensor_b(path: Path) -> pd.DataFrame:
     Flatten the nested Sensor B JSON structure into
     canonical Project 4 columns.
     """
-
     if not path.exists():
         raise FileNotFoundError(f"Missing {path}")
 
@@ -399,9 +399,18 @@ def normalize_and_clean(
     ] = "C"
 
     # ========================================================
-    # 8. CONVERT PRESSURE TO KPA
+    # 8. CONVERT PRESSURE TO PASCALS
+    # ========================================================
+    #
+    # Canonical pressure unit:
+    #
+    #     Pa
+    #
+    # 1 psi = 6894.757293168 Pa
+    # 1 kPa = 1000 Pa
     # ========================================================
 
+    # Convert psi to Pa.
     psi_mask = (
         (df["sdc_kind"] == "pressure")
         & (df["unit_label"] == "psi")
@@ -416,13 +425,36 @@ def normalize_and_clean(
             psi_mask,
             "value",
         ]
-        * 6.894757293168
+        * 6894.757293168
     )
 
     df.loc[
         psi_mask,
         "unit_label",
-    ] = "kPa"
+    ] = "Pa"
+
+    # Convert kPa to Pa.
+    kpa_mask = (
+        (df["sdc_kind"] == "pressure")
+        & (df["unit_label"] == "kPa")
+        & df["value"].notna()
+    )
+
+    df.loc[
+        kpa_mask,
+        "value",
+    ] = (
+        df.loc[
+            kpa_mask,
+            "value",
+        ]
+        * 1000
+    )
+
+    df.loc[
+        kpa_mask,
+        "unit_label",
+    ] = "Pa"
 
     # --------------------------------------------------------
     # 9. Round converted values.
@@ -495,7 +527,7 @@ def normalize_and_clean(
 
     expected_units = {
         "temperature": "C",
-        "pressure": "kPa",
+        "pressure": "Pa",
         "voltage": "V",
         "resistance": "ohm",
     }

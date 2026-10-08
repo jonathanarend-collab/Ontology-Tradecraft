@@ -8,12 +8,13 @@
 
 
 #################################################################
-# 1) Artifact bears at least one SDC (cardinality)
+# 1) Artifact bears at least one SDC
 #################################################################
 
 ex:ArtifactHasSDCShape
   a sh:NodeShape ;
   sh:targetClass cco:Artifact ;
+
   sh:property [
     sh:path bfo:bearer_of ;
     sh:minCount 1 ;
@@ -24,12 +25,13 @@ ex:ArtifactHasSDCShape
 
 
 #################################################################
-# 2) SDC is measured by at least one MICE (coverage via inverse)
+# 2) SDC is measured by at least one MICE
 #################################################################
 
 ex:SDCMeasuredByMICEShape
   a sh:NodeShape ;
   sh:targetClass bfo:SpecificallyDependentContinuant ;
+
   sh:property [
     sh:path [
       sh:inversePath cco:is_a_measurement_of
@@ -42,12 +44,13 @@ ex:SDCMeasuredByMICEShape
 
 
 #################################################################
-# 3) MICE measures exactly one SDC (functional)
+# 3) MICE measures exactly one SDC
 #################################################################
 
 ex:MICEMeasuresExactlyOneSDCShape
   a sh:NodeShape ;
   sh:targetClass cco:MeasurementInformationContentEntity ;
+
   sh:property [
     sh:path cco:is_a_measurement_of ;
     sh:minCount 1 ;
@@ -59,7 +62,7 @@ ex:MICEMeasuresExactlyOneSDCShape
 
 
 #################################################################
-# 4) MICE must have one unit and one numeric value (completeness)
+# 4) MICE has exactly one unit and one numeric value
 #################################################################
 
 ex:MICECompletenessShape
@@ -86,7 +89,7 @@ ex:MICECompletenessShape
 
 
 #################################################################
-# 5) No empty values in literals
+# 5) No empty literal values
 #################################################################
 
 ex:NoEmptyLiteralShape
@@ -120,7 +123,16 @@ ex:NoEmptyLiteralShape
 
 
 #################################################################
-# 6) Unit must match SDC being measured
+# 6) Measurement Unit must match the SDC being measured
+#################################################################
+#
+# Canonical units produced by normalize_readings.py:
+#
+# temperature -> C
+# pressure    -> Pa
+# voltage     -> V
+# resistance  -> ohm
+#
 #################################################################
 
 ex:MeasurementUnitMatchesSDCShape
@@ -129,7 +141,7 @@ ex:MeasurementUnitMatchesSDCShape
 
   sh:sparql [
     a sh:SPARQLConstraint ;
-    sh:message "The Measurement Unit does not match the kind of SDC being measured." ;
+    sh:message "The Measurement Unit does not match the canonical unit for the SDC being measured." ;
     sh:severity sh:Violation ;
 
     sh:select """
@@ -158,7 +170,7 @@ ex:MeasurementUnitMatchesSDCShape
                 LCASE(STR(?sdcLabel)),
                 "pressure"
               ),
-              "kPa",
+              "Pa",
               IF(
                 CONTAINS(
                   LCASE(STR(?sdcLabel)),
@@ -243,10 +255,13 @@ ex:NoDuplicateMICEShape
 
 
 #################################################################
-# 8) No dangling/mistyped nodes
+# 8) No dangling or mistyped nodes
 #################################################################
 
-# Every SDC must be borne by an Artifact.
+
+# --------------------------------------------------------------
+# Every SDC must be borne by at least one Artifact.
+# --------------------------------------------------------------
 
 ex:NoDanglingSDCShape
   a sh:NodeShape ;
@@ -263,7 +278,9 @@ ex:NoDanglingSDCShape
   ] .
 
 
+# --------------------------------------------------------------
 # Every Measurement Unit must be used by at least one MICE.
+# --------------------------------------------------------------
 
 ex:NoDanglingMeasurementUnitShape
   a sh:NodeShape ;
@@ -280,7 +297,9 @@ ex:NoDanglingMeasurementUnitShape
   ] .
 
 
-# Anything reached through bearer_of must be an SDC.
+# --------------------------------------------------------------
+# Every object of bfo:bearer_of must be an SDC.
+# --------------------------------------------------------------
 
 ex:BearerOfCorrectTypeShape
   a sh:NodeShape ;
@@ -294,7 +313,9 @@ ex:BearerOfCorrectTypeShape
   ] .
 
 
-# Anything measured by a MICE must be an SDC.
+# --------------------------------------------------------------
+# Every object measured by a MICE must be an SDC.
+# --------------------------------------------------------------
 
 ex:MeasurementTargetCorrectTypeShape
   a sh:NodeShape ;
@@ -308,8 +329,9 @@ ex:MeasurementTargetCorrectTypeShape
   ] .
 
 
-# Anything used as a measurement unit must actually be typed
-# as a Measurement Unit.
+# --------------------------------------------------------------
+# Every unit used by a MICE must be typed MeasurementUnit.
+# --------------------------------------------------------------
 
 ex:MeasurementUnitCorrectTypeShape
   a sh:NodeShape ;
