@@ -2,19 +2,13 @@ from pathlib import Path
 from decimal import Decimal
 
 import pandas as pd
-from rdflib import Graph, Namespace, Literal
+from rdflib import Graph, Namespace, Literal, URIRef
 from rdflib.namespace import RDF, RDFS, XSD, OWL
 
 
 # ============================================================
 # FILE PATHS
 # ============================================================
-
-# This file should live at:
-# assignment/src/scripts/measure_rdflib.py
-#
-# parents[1] therefore points to:
-# assignment/src/
 
 SRC_DIR = Path(__file__).resolve().parents[1]
 
@@ -26,14 +20,22 @@ OUTPUT_FILE = SRC_DIR / "measure_cco.ttl"
 # NAMESPACES
 # ============================================================
 
-# These namespaces match the CCO/BFO namespaces used by the
-# supplied Project 4 materials.
-
+# Canonical IRIs used for the GitHub grader checks.
 BFO = Namespace(
-    "http://purl.obolibrary.org/obo/bfo.owl#"
+    "http://purl.obolibrary.org/obo/"
 )
 
 CCO = Namespace(
+    "https://www.ontologyrepository.com/CommonCoreOntologies/"
+)
+
+# Compatibility namespaces used by the supplied Project 4
+# starter SHACL/design-pattern materials.
+BFO_LEGACY = Namespace(
+    "http://purl.obolibrary.org/obo/bfo.owl#"
+)
+
+CCO_LEGACY = Namespace(
     "http://www.ontologyrepository.com/CommonCoreOntologies/"
 )
 
@@ -43,14 +45,27 @@ EX = Namespace(
 
 
 # ============================================================
-# CCO CLASSES AND PROPERTIES
+# CANONICAL CLASSES AND PROPERTIES
 # ============================================================
+
+# Artifact
+ARTIFACT_CLASS = CCO.Artifact
+
+# Specifically Dependent Continuant
+BFO_SDC_CLASS = URIRef(
+    "http://purl.obolibrary.org/obo/BFO_0000020"
+)
 
 # Measurement Information Content Entity
 MICE_CLASS = CCO.MeasurementInformationContentEntity
 
 # Measurement Unit
 MEASUREMENT_UNIT_CLASS = CCO.MeasurementUnit
+
+# bearer of
+BFO_BEARER_OF = URIRef(
+    "http://purl.obolibrary.org/obo/BFO_0000196"
+)
 
 # MICE -> SDC
 IS_MEASURE_OF = CCO.is_a_measurement_of
@@ -60,6 +75,41 @@ HAS_VALUE = CCO.has_decimal_value
 
 # MICE -> Measurement Unit
 USES_MEASUREMENT_UNIT = CCO.uses_measurement_unit
+
+
+# ============================================================
+# LEGACY COMPATIBILITY CLASSES AND PROPERTIES
+# ============================================================
+
+LEGACY_ARTIFACT_CLASS = CCO_LEGACY.Artifact
+
+LEGACY_BFO_SDC_CLASS = (
+    BFO_LEGACY.SpecificallyDependentContinuant
+)
+
+LEGACY_MICE_CLASS = (
+    CCO_LEGACY.MeasurementInformationContentEntity
+)
+
+LEGACY_MEASUREMENT_UNIT_CLASS = (
+    CCO_LEGACY.MeasurementUnit
+)
+
+LEGACY_BFO_BEARER_OF = (
+    BFO_LEGACY.bearer_of
+)
+
+LEGACY_IS_MEASURE_OF = (
+    CCO_LEGACY.is_a_measurement_of
+)
+
+LEGACY_HAS_VALUE = (
+    CCO_LEGACY.has_decimal_value
+)
+
+LEGACY_USES_MEASUREMENT_UNIT = (
+    CCO_LEGACY.uses_measurement_unit
+)
 
 
 # ============================================================
@@ -76,13 +126,12 @@ REQUIRED_COLUMNS = [
 
 
 # ============================================================
-# HELPER FUNCTION
+# HELPERS
 # ============================================================
 
 def safe_id(value):
     """
-    Convert a CSV value into a string that is safer to use
-    inside one of our locally generated IRIs.
+    Convert a CSV value into a safer local IRI component.
     """
 
     return (
@@ -92,6 +141,82 @@ def safe_id(value):
         .replace("/", "_")
         .replace("\\", "_")
         .replace(":", "_")
+    )
+
+
+def count_typed_nodes(
+    graph,
+    class_iri,
+):
+    """
+    Count distinct subjects explicitly typed with class_iri.
+    """
+
+    return len(
+        set(
+            graph.subjects(
+                RDF.type,
+                class_iri,
+            )
+        )
+    )
+
+
+def add_type_with_compatibility(
+    graph,
+    node,
+    canonical_class,
+    legacy_class,
+):
+    """
+    Add both the canonical rdf:type triple expected by the
+    grader and the legacy rdf:type triple expected by the
+    supplied starter materials.
+    """
+
+    graph.add(
+        (
+            node,
+            RDF.type,
+            canonical_class,
+        )
+    )
+
+    graph.add(
+        (
+            node,
+            RDF.type,
+            legacy_class,
+        )
+    )
+
+
+def add_relation_with_compatibility(
+    graph,
+    subject,
+    canonical_property,
+    legacy_property,
+    obj,
+):
+    """
+    Add both canonical and starter-material-compatible
+    relation triples.
+    """
+
+    graph.add(
+        (
+            subject,
+            canonical_property,
+            obj,
+        )
+    )
+
+    graph.add(
+        (
+            subject,
+            legacy_property,
+            obj,
+        )
     )
 
 
@@ -111,15 +236,17 @@ def main():
             f"{DATA_FILE}"
         )
 
-
     # --------------------------------------------------------
     # 2. Load the normalized CSV.
     # --------------------------------------------------------
 
-    df = pd.read_csv(DATA_FILE)
+    df = pd.read_csv(
+        DATA_FILE
+    )
 
-    print(f"Loaded {len(df)} normalized measurement rows.")
-
+    print(
+        f"Loaded {len(df)} normalized measurement rows."
+    )
 
     # --------------------------------------------------------
     # 3. Verify all required columns exist.
@@ -137,38 +264,74 @@ def main():
             + ", ".join(missing_columns)
         )
 
-
     # --------------------------------------------------------
     # 4. Create the RDF graph.
     # --------------------------------------------------------
 
     g = Graph()
 
-
     # --------------------------------------------------------
     # 5. Bind namespaces.
     # --------------------------------------------------------
 
-    g.bind("bfo", BFO)
-    g.bind("cco", CCO)
-    g.bind("ex", EX)
-    g.bind("rdf", RDF)
-    g.bind("rdfs", RDFS)
-    g.bind("xsd", XSD)
-    g.bind("owl", OWL)
+    g.bind(
+        "bfo",
+        BFO,
+    )
 
+    g.bind(
+        "cco",
+        CCO,
+    )
+
+    g.bind(
+        "bfo_legacy",
+        BFO_LEGACY,
+    )
+
+    g.bind(
+        "cco_legacy",
+        CCO_LEGACY,
+    )
+
+    g.bind(
+        "ex",
+        EX,
+    )
+
+    g.bind(
+        "rdf",
+        RDF,
+    )
+
+    g.bind(
+        "rdfs",
+        RDFS,
+    )
+
+    g.bind(
+        "xsd",
+        XSD,
+    )
+
+    g.bind(
+        "owl",
+        OWL,
+    )
 
     # --------------------------------------------------------
-    # 6. Add basic ontology metadata.
+    # 6. Add ontology metadata.
     # --------------------------------------------------------
 
-    ontology = EX.Project4MeasurementOntology
+    ontology = (
+        EX.Project4MeasurementOntology
+    )
 
     g.add(
         (
             ontology,
             RDF.type,
-            OWL.Ontology
+            OWL.Ontology,
         )
     )
 
@@ -178,21 +341,16 @@ def main():
             RDFS.label,
             Literal(
                 "Project 4 Measurement Ontology",
-                lang="en"
-            )
+                lang="en",
+            ),
         )
     )
-
 
     # --------------------------------------------------------
     # 7. Process each normalized measurement row.
     # --------------------------------------------------------
 
     for index, row in df.iterrows():
-
-        # ----------------------------------------------------
-        # Read values from the normalized CSV.
-        # ----------------------------------------------------
 
         artifact_id = str(
             row["artifact_id"]
@@ -206,19 +364,20 @@ def main():
             row["unit_label"]
         ).strip()
 
-        timestamp = str(
+        # Timestamp remains preserved in the normalized CSV.
+        # The supplied measurement pattern does not define
+        # the relation to use for it.
+        _timestamp = str(
             row["timestamp"]
         ).strip()
 
-        # Decimal is used instead of float so that the RDF
-        # literal can cleanly use xsd:decimal.
+        # Keep measurement values as xsd:decimal.
         value = Decimal(
             str(row["value"])
         )
 
-
         # ----------------------------------------------------
-        # Build safe identifiers.
+        # Build safe local identifiers.
         # ----------------------------------------------------
 
         artifact_key = safe_id(
@@ -233,43 +392,35 @@ def main():
             unit_label
         )
 
-
         # ----------------------------------------------------
         # Create RDF individuals.
         # ----------------------------------------------------
 
-        # Physical artifact being measured
         artifact = EX[
             f"artifact_{artifact_key}"
         ]
 
-        # Specifically Dependent Continuant associated
-        # with that artifact, such as temperature or pressure
         sdc = EX[
             f"sdc_{artifact_key}_{sdc_key}"
         ]
 
-        # Each normalized reading gets its own MICE
         mice = EX[
             f"mice_{index}"
         ]
 
-        # Measurement units can be reused across readings
         unit = EX[
             f"unit_{unit_key}"
         ]
-
 
         # ====================================================
         # ARTIFACT
         # ====================================================
 
-        g.add(
-            (
-                artifact,
-                RDF.type,
-                CCO.Artifact
-            )
+        add_type_with_compatibility(
+            g,
+            artifact,
+            ARTIFACT_CLASS,
+            LEGACY_ARTIFACT_CLASS,
         )
 
         g.add(
@@ -278,22 +429,20 @@ def main():
                 RDFS.label,
                 Literal(
                     artifact_id,
-                    lang="en"
-                )
+                    lang="en",
+                ),
             )
         )
-
 
         # ====================================================
         # SPECIFICALLY DEPENDENT CONTINUANT
         # ====================================================
 
-        g.add(
-            (
-                sdc,
-                RDF.type,
-                BFO.SpecificallyDependentContinuant
-            )
+        add_type_with_compatibility(
+            g,
+            sdc,
+            BFO_SDC_CLASS,
+            LEGACY_BFO_SDC_CLASS,
         )
 
         g.add(
@@ -302,42 +451,33 @@ def main():
                 RDFS.label,
                 Literal(
                     f"{artifact_id} {sdc_kind}",
-                    lang="en"
-                )
+                    lang="en",
+                ),
             )
         )
-
 
         # ====================================================
         # ARTIFACT BEARS SDC
         # ====================================================
 
-        g.add(
-            (
-                artifact,
-                BFO.bearer_of,
-                sdc
-            )
+        add_relation_with_compatibility(
+            g,
+            artifact,
+            BFO_BEARER_OF,
+            LEGACY_BFO_BEARER_OF,
+            sdc,
         )
-
 
         # ====================================================
         # MEASUREMENT INFORMATION CONTENT ENTITY
         # ====================================================
 
-        g.add(
-            (
-                mice,
-                RDF.type,
-                MICE_CLASS
-            )
+        add_type_with_compatibility(
+            g,
+            mice,
+            MICE_CLASS,
+            LEGACY_MICE_CLASS,
         )
-
-
-        # Give every MICE a unique label.
-        #
-        # This helps avoid triggering the project's
-        # no_duplicate_labels.rq query.
 
         g.add(
             (
@@ -349,51 +489,49 @@ def main():
                         f"{sdc_kind} "
                         f"measurement {index}"
                     ),
-                    lang="en"
-                )
+                    lang="en",
+                ),
             )
         )
 
-
         # ====================================================
-        # MICE IS A MEASUREMENT OF THE SDC
+        # MICE IS A MEASUREMENT OF SDC
         # ====================================================
 
-        g.add(
-            (
-                mice,
-                IS_MEASURE_OF,
-                sdc
-            )
+        add_relation_with_compatibility(
+            g,
+            mice,
+            IS_MEASURE_OF,
+            LEGACY_IS_MEASURE_OF,
+            sdc,
         )
-
 
         # ====================================================
         # MICE HAS DECIMAL VALUE
         # ====================================================
 
-        g.add(
-            (
-                mice,
-                HAS_VALUE,
-                Literal(
-                    value,
-                    datatype=XSD.decimal
-                )
-            )
+        decimal_literal = Literal(
+            value,
+            datatype=XSD.decimal,
         )
 
+        add_relation_with_compatibility(
+            g,
+            mice,
+            HAS_VALUE,
+            LEGACY_HAS_VALUE,
+            decimal_literal,
+        )
 
         # ====================================================
         # MEASUREMENT UNIT
         # ====================================================
 
-        g.add(
-            (
-                unit,
-                RDF.type,
-                MEASUREMENT_UNIT_CLASS
-            )
+        add_type_with_compatibility(
+            g,
+            unit,
+            MEASUREMENT_UNIT_CLASS,
+            LEGACY_MEASUREMENT_UNIT_CLASS,
         )
 
         g.add(
@@ -402,43 +540,22 @@ def main():
                 RDFS.label,
                 Literal(
                     unit_label,
-                    lang="en"
-                )
+                    lang="en",
+                ),
             )
         )
-
 
         # ====================================================
         # MICE USES MEASUREMENT UNIT
         # ====================================================
 
-        g.add(
-            (
-                mice,
-                USES_MEASUREMENT_UNIT,
-                unit
-            )
+        add_relation_with_compatibility(
+            g,
+            mice,
+            USES_MEASUREMENT_UNIT,
+            LEGACY_USES_MEASUREMENT_UNIT,
+            unit,
         )
-
-
-        # ====================================================
-        # TIMESTAMP
-        # ====================================================
-        #
-        # The normalized data contains a timestamp, but the
-        # supplied CCO measurement design pattern does not
-        # specify the exact property to use for connecting it.
-        #
-        # We therefore preserve it in the normalized CSV but
-        # do not invent an ontology relation here.
-        #
-        # The variable remains available:
-        #
-        # timestamp
-        #
-        # if a later project instruction specifies how it
-        # should be represented.
-
 
     # --------------------------------------------------------
     # 8. Create output directory if necessary.
@@ -446,9 +563,8 @@ def main():
 
     OUTPUT_FILE.parent.mkdir(
         parents=True,
-        exist_ok=True
+        exist_ok=True,
     )
-
 
     # --------------------------------------------------------
     # 9. Serialize graph as Turtle.
@@ -456,31 +572,92 @@ def main():
 
     g.serialize(
         destination=OUTPUT_FILE,
-        format="turtle"
+        format="turtle",
     )
 
-
     # --------------------------------------------------------
-    # 10. Verify that the written file parses successfully.
+    # 10. Verify the written file parses successfully.
     # --------------------------------------------------------
 
     test_graph = Graph()
 
     test_graph.parse(
         OUTPUT_FILE,
-        format="turtle"
+        format="turtle",
     )
 
+    # --------------------------------------------------------
+    # 11. Check required typed nodes locally.
+    #
+    # This specifically protects against the GitHub error:
+    #
+    # Missing required typed nodes:
+    # Artifact=0, SDC=0, MICE=0, MU=0
+    # --------------------------------------------------------
+
+    typed_counts = {
+        "Artifact": count_typed_nodes(
+            test_graph,
+            ARTIFACT_CLASS,
+        ),
+        "SDC": count_typed_nodes(
+            test_graph,
+            BFO_SDC_CLASS,
+        ),
+        "MICE": count_typed_nodes(
+            test_graph,
+            MICE_CLASS,
+        ),
+        "MU": count_typed_nodes(
+            test_graph,
+            MEASUREMENT_UNIT_CLASS,
+        ),
+    }
+
+    print()
+    print(
+        "Canonical required typed-node counts:"
+    )
+
+    for name, count in typed_counts.items():
+        print(
+            f"  {name}: {count}"
+        )
+
+    missing_types = [
+        name
+        for name, count in typed_counts.items()
+        if count == 0
+    ]
+
+    if missing_types:
+        raise ValueError(
+            "Missing canonical required typed nodes "
+            "after RDF generation: "
+            + ", ".join(missing_types)
+        )
 
     # --------------------------------------------------------
-    # 11. Report results.
+    # 12. Report results.
     # --------------------------------------------------------
 
     print()
-    print("RDF generation complete.")
-    print(f"Output file: {OUTPUT_FILE}")
-    print(f"Input rows: {len(df)}")
-    print(f"Triples generated: {len(g)}")
+    print(
+        "RDF generation complete."
+    )
+
+    print(
+        f"Output file: {OUTPUT_FILE}"
+    )
+
+    print(
+        f"Input rows: {len(df)}"
+    )
+
+    print(
+        f"Triples generated: {len(g)}"
+    )
+
     print(
         f"Triples successfully parsed back: "
         f"{len(test_graph)}"
